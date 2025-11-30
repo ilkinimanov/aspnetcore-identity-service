@@ -1,0 +1,41 @@
+services:
+  identity-service-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    image: identity-service:development
+    container_name: identity-service-api-dev
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+      - DOTNET_USE_POLLING_FILE_WATCHER=true
+      - DOTNET_WATCH_RESTART_ON_RUDE_EDIT=true
+    volumes:
+      - ./src:/app/src
+      - ./test:/app/test
+      - ./IdentityService.sln:/app/IdentityService.sln
+      - /app/src/IdentityService.API/bin
+      - /app/src/IdentityService.API/obj
+      - /app/src/IdentityService.Domain/bin
+      - /app/src/IdentityService.Domain/obj
+      - /app/src/IdentityService.Infrastructure/bin
+      - /app/src/IdentityService.Infrastructure/obj
+      - /app/test/IdentityService.API.Test/bin
+      - /app/test/IdentityService.API.Test/obj
+      - /app/test/IdentityService.Domain.Test/bin
+      - /app/test/IdentityService.Domain.Test/obj
+      - /app/test/IdentityService.Infrastructure.Test/bin
+      - /app/test/IdentityService.Infrastructure.Test/obj
+    restart: unless-stopped
+    networks:
+      - identity-service-network
+    stdin_open: true
+    tty: true
+
+networks:
+  identity-service-network:
+    driver: bridge
